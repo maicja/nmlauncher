@@ -1,4 +1,4 @@
-![image](https://raw.githubusercontent.com/maicja/nmlauncher/refs/heads/main/assets/bgmain.png)
+![image](https://raw.githubusercontent.com/maicja/nmlauncher/refs/heads/main/assets/bg_main.png)
 Minecraft launcher with classic look disconnected from mojang servers
 
 # To do
