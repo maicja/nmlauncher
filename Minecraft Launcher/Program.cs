@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Resources;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -33,6 +34,7 @@ namespace Minecraft_Launcher
         {
             if (!Directory.Exists(Form1.launcherdir))
             {
+                
                 Directory.CreateDirectory(Form1.launcherdir);
             }
             if (!File.Exists(Form1.launcherdir + "\\minecraftzyczu.ttf"))
