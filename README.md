@@ -1,4 +1,4 @@
-![image](https://raw.githubusercontent.com/maicja/nmlauncher/refs/heads/main/assets/bg_main.png)
+![bg_main](https://raw.githubusercontent.com/maicja/nmlauncher/refs/heads/main/assets/bg_main.png)
 
 Minecraft launcher with classic look disconnected from mojang servers
 
@@ -6,10 +6,10 @@ Minecraft launcher with classic look disconnected from mojang servers
 - add more versions
 
 # Screenshots
-![image](https://raw.githubusercontent.com/maicja/nmlauncher/refs/heads/main/assets/ss1.png)
+![ss1](https://raw.githubusercontent.com/maicja/nmlauncher/refs/heads/main/assets/ss1.png)
 
-![image](https://raw.githubusercontent.com/maicja/nmlauncher/refs/heads/main/assets/ss2.png)
+![ss2](https://raw.githubusercontent.com/maicja/nmlauncher/refs/heads/main/assets/ss2.png)
 
-![image](https://raw.githubusercontent.com/maicja/nmlauncher/refs/heads/main/assets/ss3.png)
+![ss3](https://raw.githubusercontent.com/maicja/nmlauncher/refs/heads/main/assets/ss3.png)
 
-![image](https://raw.githubusercontent.com/maicja/nmlauncher/refs/heads/main/assets/ss4.png)
+![ss4](https://raw.githubusercontent.com/maicja/nmlauncher/refs/heads/main/assets/ss4.png)
