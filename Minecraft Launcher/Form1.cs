@@ -85,7 +85,7 @@ namespace Minecraft_Launcher
         string[] account = { "n", "cracked", "cracked" };
         string ram = "2048";
         string selver = "Release 1.20.6";
-        int version = 9;
+        int version = 10;
         async void init()
         {
             base.Size = new Size(902, 578);
@@ -278,19 +278,25 @@ namespace Minecraft_Launcher
             
             init();
         }
-
+        bool skipcheck = true;
         private async void buttonplay_Click(object sender, EventArgs e)
         {
             try
             {
+                if (!skipcheck)
+                {
+                    skipcheck = true;
+                    return;
+                }
                 if (!deatach)
                 {
                     java.Kill();
+                    
                     return;
                 }
                 deatach = false;
                 progressBarmain.Visible = true;
-
+                skipcheck = true;
 
                 if (comboBoxprofiles.SelectedItem.ToString().StartsWith("Custom"))
                 {
@@ -331,7 +337,8 @@ namespace Minecraft_Launcher
 
                     if (url != "offline")
                     {
-                        buttonplay.Text = $"Checking files...";
+                        skipcheck = false;
+                        buttonplay.Text = $"Checking files...\r\nClick to skip";
                         List<string[]> files = new List<string[]>();
                         float maxsizef = 0;
                         foreach (string filen in webClient.DownloadString($"http://{url}/nmlauncher/files/jre/{verindex[2]}/list.txt").Split('\n'))
@@ -369,80 +376,84 @@ namespace Minecraft_Launcher
                         webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(Completed);
                         foreach (string[] file in files)
                         {
-                            if (!deatach)
+                            if (!skipcheck)
                             {
-                                float oldbytes = 0;
-
-                                if (file[3] == "jre")
+                                if (!deatach)
                                 {
-                                    int wl = Path.GetFileName($"{javapath}{verindex[2]}\\{file[0]}").Length + 1;
-                                    string directory = $"{javapath}{verindex[2]}\\{file[0]}".Remove($"{javapath}{verindex[2]}\\{file[0]}".Length - wl, wl);
 
-                                    if (!Directory.Exists(directory))
-                                    {
-                                        Directory.CreateDirectory(directory);
-                                    }
+                                    float oldbytes = 0;
 
-                                    if (File.Exists($"{javapath}{verindex[2]}\\{file[0]}"))
+                                    if (file[3] == "jre")
                                     {
-                                        if (CalculateMD5($"{javapath}{verindex[2]}\\{file[0]}") != file[1])
+                                        int wl = Path.GetFileName($"{javapath}{verindex[2]}\\{file[0]}").Length + 1;
+                                        string directory = $"{javapath}{verindex[2]}\\{file[0]}".Remove($"{javapath}{verindex[2]}\\{file[0]}".Length - wl, wl);
+
+                                        if (!Directory.Exists(directory))
                                         {
+                                            Directory.CreateDirectory(directory);
+                                        }
 
-                                            await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/jre/{verindex[2]}/{file[0]}", $"{javapath}{verindex[2]}\\{file[0]}");
+                                        if (File.Exists($"{javapath}{verindex[2]}\\{file[0]}"))
+                                        {
+                                            if (CalculateMD5($"{javapath}{verindex[2]}\\{file[0]}") != file[1])
+                                            {
+
+                                                await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/jre/{verindex[2]}/{file[0]}", $"{javapath}{verindex[2]}\\{file[0]}");
+                                            }
+                                            else
+                                            {
+                                                //plik jest cool shit
+                                            }
                                         }
                                         else
                                         {
-                                            //plik jest cool shit
+                                            await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/jre/{verindex[2]}/{file[0]}", $"{javapath}{verindex[2]}\\{file[0]}");
                                         }
+
                                     }
                                     else
                                     {
-                                        await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/jre/{verindex[2]}/{file[0]}", $"{javapath}{verindex[2]}\\{file[0]}");
-                                    }
 
-                                }
-                                else
-                                {
-
-                                    int wl = Path.GetFileName($"{launcherdir}\\profiles\\{profilename}\\{file[0]}").Length + 1;
-                                    string directory = $"{launcherdir}\\profiles\\{profilename}\\{file[0]}".Remove($"{launcherdir}\\profiles\\{profilename}\\{file[0]}".Length - wl, wl);
-                                    if (!Directory.Exists(directory))
-                                    {
-                                        Directory.CreateDirectory(directory);
-                                    }
-                                    if (File.Exists($"{launcherdir}\\profiles\\{profilename}\\{file[0]}"))
-                                    {
-                                        if (CalculateMD5($"{launcherdir}\\profiles\\{profilename}\\{file[0]}") != file[1])
+                                        int wl = Path.GetFileName($"{launcherdir}\\profiles\\{profilename}\\{file[0]}").Length + 1;
+                                        string directory = $"{launcherdir}\\profiles\\{profilename}\\{file[0]}".Remove($"{launcherdir}\\profiles\\{profilename}\\{file[0]}".Length - wl, wl);
+                                        if (!Directory.Exists(directory))
                                         {
-
-                                            await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/v/{verindex[1]}/{file[0]}", $"{launcherdir}\\profiles\\{profilename}\\{file[0]}");
+                                            Directory.CreateDirectory(directory);
                                         }
-                                    }
-                                    else
-                                    {
-                                        bool skip = false;
-                                        if (File.Exists($"{launcherdir}\\game\\{file[0]}"))
+                                        if (File.Exists($"{launcherdir}\\profiles\\{profilename}\\{file[0]}"))
                                         {
-                                            if (CalculateMD5($"{launcherdir}\\game\\{file[0]}") == file[1])
+                                            if (CalculateMD5($"{launcherdir}\\profiles\\{profilename}\\{file[0]}") != file[1])
                                             {
-                                                File.Copy($"{launcherdir}\\game\\{file[0]}", $"{launcherdir}\\profiles\\{profilename}\\{file[0]}");
-                                                skip = true;
+
+                                                await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/v/{verindex[1]}/{file[0]}", $"{launcherdir}\\profiles\\{profilename}\\{file[0]}");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            bool skip = false;
+                                            if (File.Exists($"{launcherdir}\\game\\{file[0]}"))
+                                            {
+                                                if (CalculateMD5($"{launcherdir}\\game\\{file[0]}") == file[1])
+                                                {
+                                                    File.Copy($"{launcherdir}\\game\\{file[0]}", $"{launcherdir}\\profiles\\{profilename}\\{file[0]}");
+                                                    skip = true;
+                                                }
+                                            }
+
+
+                                            if (!skip)
+                                            {
+                                                await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/v/{verindex[1]}/{file[0]}", $"{launcherdir}\\profiles\\{profilename}\\{file[0]}");
                                             }
                                         }
 
 
-                                        if (!skip)
-                                        {
-                                            await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/v/{verindex[1]}/{file[0]}", $"{launcherdir}\\profiles\\{profilename}\\{file[0]}");
-                                        }
                                     }
-
-
+                                    //MessageBox.Show((float.Parse(file[2]) / 1000000f).ToString());
+                                    dwnlsizef += float.Parse(file[2]) / 1000000f;
+                                    progressBarmain.Value = (int)dwnlsizef;
+                                    buttonplay.Text = $"Downloading {progressBarmain.Value}/{progressBarmain.Maximum}MB {progressBarmain.Value * 100 / progressBarmain.Maximum}%\r\nClick to skip";
                                 }
-                                //MessageBox.Show((float.Parse(file[2]) / 1000000f).ToString());
-                                dwnlsizef += float.Parse(file[2]) / 1000000f;
-                                progressBarmain.Value = (int)dwnlsizef;
-                                buttonplay.Text = $"Downloading {progressBarmain.Value}/{progressBarmain.Maximum}MB {progressBarmain.Value * 100 / progressBarmain.Maximum}%\r\nClick to cancel download";
                             }
                         }
                         buttonplay.Text = $"Checked files";
@@ -530,7 +541,8 @@ namespace Minecraft_Launcher
                     }
                     if (url != "offline")
                     {
-                        buttonplay.Text = $"Checking files...";
+                        skipcheck = false;
+                        buttonplay.Text = $"Checking files...\r\nClick to skip";
                         List<string[]> files = new List<string[]>();
                         float maxsizef = 0;
                         foreach (string filen in webClient.DownloadString($"http://{url}/nmlauncher/files/jre/{verindex[2]}/list.txt").Split('\n'))
@@ -568,66 +580,69 @@ namespace Minecraft_Launcher
                         webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(Completed);
                         foreach (string[] file in files)
                         {
-                            if (!deatach)
+                            if (!skipcheck)
                             {
-                                float oldbytes = 0;
-
-                                if (file[3] == "jre")
+                                if (!deatach)
                                 {
-                                    int wl = Path.GetFileName($"{javapath}{verindex[2]}\\{file[0]}").Length + 1;
-                                    string directory = $"{javapath}{verindex[2]}\\{file[0]}".Remove($"{javapath}{verindex[2]}\\{file[0]}".Length - wl, wl);
+                                    float oldbytes = 0;
 
-                                    if (!Directory.Exists(directory))
+                                    if (file[3] == "jre")
                                     {
-                                        Directory.CreateDirectory(directory);
-                                    }
+                                        int wl = Path.GetFileName($"{javapath}{verindex[2]}\\{file[0]}").Length + 1;
+                                        string directory = $"{javapath}{verindex[2]}\\{file[0]}".Remove($"{javapath}{verindex[2]}\\{file[0]}".Length - wl, wl);
 
-                                    if (File.Exists($"{javapath}{verindex[2]}\\{file[0]}"))
-                                    {
-                                        if (CalculateMD5($"{javapath}{verindex[2]}\\{file[0]}") != file[1])
+                                        if (!Directory.Exists(directory))
                                         {
+                                            Directory.CreateDirectory(directory);
+                                        }
 
-                                            await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/jre/{verindex[2]}/{file[0]}", $"{javapath}{verindex[2]}\\{file[0]}");
+                                        if (File.Exists($"{javapath}{verindex[2]}\\{file[0]}"))
+                                        {
+                                            if (CalculateMD5($"{javapath}{verindex[2]}\\{file[0]}") != file[1])
+                                            {
+
+                                                await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/jre/{verindex[2]}/{file[0]}", $"{javapath}{verindex[2]}\\{file[0]}");
+                                            }
+                                            else
+                                            {
+                                                //plik jest cool shit
+                                            }
                                         }
                                         else
                                         {
-                                            //plik jest cool shit
+                                            await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/jre/{verindex[2]}/{file[0]}", $"{javapath}{verindex[2]}\\{file[0]}");
                                         }
+
                                     }
                                     else
                                     {
-                                        await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/jre/{verindex[2]}/{file[0]}", $"{javapath}{verindex[2]}\\{file[0]}");
-                                    }
 
-                                }
-                                else
-                                {
-
-                                    int wl = Path.GetFileName($"{launcherdir}\\game\\{file[0]}").Length + 1;
-                                    string directory = $"{launcherdir}\\game\\{file[0]}".Remove($"{launcherdir}\\game\\{file[0]}".Length - wl, wl);
-                                    if (!Directory.Exists(directory))
-                                    {
-                                        Directory.CreateDirectory(directory);
-                                    }
-                                    if (File.Exists($"{launcherdir}\\game\\{file[0]}"))
-                                    {
-                                        if (CalculateMD5($"{launcherdir}\\game\\{file[0]}") != file[1])
+                                        int wl = Path.GetFileName($"{launcherdir}\\game\\{file[0]}").Length + 1;
+                                        string directory = $"{launcherdir}\\game\\{file[0]}".Remove($"{launcherdir}\\game\\{file[0]}".Length - wl, wl);
+                                        if (!Directory.Exists(directory))
                                         {
+                                            Directory.CreateDirectory(directory);
+                                        }
+                                        if (File.Exists($"{launcherdir}\\game\\{file[0]}"))
+                                        {
+                                            if (CalculateMD5($"{launcherdir}\\game\\{file[0]}") != file[1])
+                                            {
 
+                                                await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/v/{verindex[1]}/{file[0]}", $"{launcherdir}\\game\\{file[0]}");
+                                            }
+                                        }
+                                        else
+                                        {
                                             await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/v/{verindex[1]}/{file[0]}", $"{launcherdir}\\game\\{file[0]}");
                                         }
-                                    }
-                                    else
-                                    {
-                                        await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/v/{verindex[1]}/{file[0]}", $"{launcherdir}\\game\\{file[0]}");
-                                    }
 
 
+                                    }
+                                    //MessageBox.Show((float.Parse(file[2]) / 1000000f).ToString());
+                                    dwnlsizef += float.Parse(file[2]) / 1000000f;
+                                    progressBarmain.Value = (int)dwnlsizef;
+                                    buttonplay.Text = $"Downloading {progressBarmain.Value}/{progressBarmain.Maximum}MB {progressBarmain.Value * 100 / progressBarmain.Maximum}%\r\nClick to skip";
                                 }
-                                //MessageBox.Show((float.Parse(file[2]) / 1000000f).ToString());
-                                dwnlsizef += float.Parse(file[2]) / 1000000f;
-                                progressBarmain.Value = (int)dwnlsizef;
-                                buttonplay.Text = $"Downloading {progressBarmain.Value}/{progressBarmain.Maximum}MB {progressBarmain.Value * 100 / progressBarmain.Maximum}%\r\nClick to cancel download";
                             }
                         }
                         buttonplay.Text = $"Checked files";
@@ -741,7 +756,7 @@ namespace Minecraft_Launcher
         {
             
             progressBarmain.Value += (int)((e.BytesReceived / 1000000) - oldbytes);
-            buttonplay.Text = $"Downloading {progressBarmain.Value}/{progressBarmain.Maximum}MB {progressBarmain.Value * 100 / progressBarmain.Maximum}%\r\nClick to cancel download";
+            buttonplay.Text = $"Downloading {progressBarmain.Value}/{progressBarmain.Maximum}MB {progressBarmain.Value * 100 / progressBarmain.Maximum}%\r\nClick to skip";
             oldbytes = e.BytesReceived / 1000000;
 
 
@@ -850,7 +865,7 @@ namespace Minecraft_Launcher
             string tosave = "";
             foreach (string s in File.ReadAllLines(configsdir + "\\accounts.mks"))
             {
-                if (!s.Contains(comboBoxcracked.SelectedItem.ToString().Replace("                                        ", "|")))
+                if (!s.Contains(comboBoxmicrosoft.SelectedItem.ToString().Replace("                                        ", "|")))
                 {
                     tosave += s + "\r\n";
                 }
@@ -953,10 +968,15 @@ namespace Minecraft_Launcher
                 {
                     if (s.Length > 2)
                     {
-                        if (!tosave.Contains($"|{account[1]}|"))
+                        if (!s.Contains($"|{account[1]}|"))
                         {
 
                             tosave += s + "\r\n";
+                            MessageBox.Show(s, "cool");
+                        }
+                        else
+                        {
+                            MessageBox.Show(s, "skipped");
                         }
                     }
                 }
