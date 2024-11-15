@@ -22,7 +22,7 @@ namespace Minecraft_Launcher
         public Form1()
         {
             InitializeComponent();
-            this.MaximizeBox = false;
+            MaximizeBox = false;
         }
         public static string url = "mksteam.ovh";
         public static string launcherdir = System.IO.Directory.GetCurrentDirectory();
@@ -85,27 +85,28 @@ namespace Minecraft_Launcher
         string[] account = { "n", "cracked", "cracked" };
         string ram = "2048";
         string selver = "Release 1.20.6";
-        int version = 7;
+        int version = 9;
         async void init()
         {
             base.Size = new Size(902, 578);
-            this.panelmain.Location = new Point(0, 0);
-            this.panelloading.Location = new Point(0, 0);
-            this.panelpostload.Location = new Point(151, 177);
-            this.panellogin.Location = new Point(151, 177);
-            this.panelnews.Location = new Point(0, 0);
-            this.panelaccount.Location = new Point(0, 0);
-            this.panelprofiles.Location = new Point(0, 0);
-            this.panellogin.BackColor = Color.FromArgb(130, 50, 50, 50);
-            this.panelpostload.BackColor = Color.FromArgb(130, 50, 50, 50);
-            this.panel2.BackColor = Color.FromArgb(130, 50, 50, 50);
-            this.panel5.BackColor = Color.FromArgb(130, 50, 50, 50);
-            this.panelmain.Visible = false;
-            this.progressBarmain.Visible = false;
-            this.panellogin.Visible = false;
-            this.panelaccount.Visible = false;
-            this.panelprofiles.Visible = false;
-            this.panelpostload.Visible = true;
+            panelmain.Location = new Point(0, 0);
+            panelloading.Location = new Point(0, 0);
+            panelpostload.Location = new Point(151, 177);
+            panellogin.Location = new Point(151, 177);
+            panelnews.Location = new Point(0, 0);
+            panelaccount.Location = new Point(0, 0);
+            panelprofiles.Location = new Point(0, 0);
+            panellogin.BackColor = Color.FromArgb(130, 50, 50, 50);
+            panelpostload.BackColor = Color.FromArgb(130, 50, 50, 50);
+            panel2.BackColor = Color.FromArgb(130, 50, 50, 50);
+            panel5.BackColor = Color.FromArgb(130, 50, 50, 50);
+            panelmain.Visible = false;
+            progressBarmain.Visible = false;
+            panellogin.Visible = false;
+            panelaccount.Visible = false;
+            panelprofiles.Visible = false;
+            panelpostload.Visible = true;
+            panelnews.Visible = true;
 
             labelloading.Text = "Checking server connection...";
             try
@@ -462,7 +463,7 @@ namespace Minecraft_Launcher
                         string args = File.ReadAllText($"{launcherdir}\\{verindex[1]}.args").Replace("LAUNCHERPATH", $"{launcherdir}\\profiles\\{profilename}").Replace("RAMMB", ram).Replace("USERNAMEMOD", account[0]).Replace("TOKEN32", accesstoken);
                         if (account[1] != "cracked")
                         {
-                            args = args.Replace("--userType legacy", "--userType msa").Replace("UUID32", this.account[1]);
+                            args = args.Replace("--userType legacy", "--userType msa").Replace("UUID32", account[1]);
                         }
                         else
                         {
@@ -646,7 +647,7 @@ namespace Minecraft_Launcher
                         string args = File.ReadAllText($"{launcherdir}\\{verindex[1]}.args").Replace("LAUNCHERPATH", $"{launcherdir}\\game").Replace("RAMMB", ram).Replace("USERNAMEMOD", account[0]).Replace("TOKEN32", accesstoken);
                         if (account[1] != "cracked")
                         {
-                            args = args.Replace("--userType legacy", "--userType msa").Replace("UUID32", this.account[1]);
+                            args = args.Replace("--userType legacy", "--userType msa").Replace("UUID32", account[1]);
                         }
                         else
                         {
@@ -826,7 +827,7 @@ namespace Minecraft_Launcher
             {
                 if (!s.Contains($"{comboBoxcracked.SelectedItem.ToString()}|cracked"))
                 {
-                    tosave += s;
+                    tosave += s + "\r\n";
                 }
             }
             File.WriteAllText(configsdir + "\\accounts.mks", tosave);
@@ -851,7 +852,7 @@ namespace Minecraft_Launcher
             {
                 if (!s.Contains(comboBoxcracked.SelectedItem.ToString().Replace("                                        ", "|")))
                 {
-                    tosave += s;
+                    tosave += s + "\r\n";
                 }
             }
             File.WriteAllText(configsdir + "\\accounts.mks", tosave);
@@ -952,7 +953,7 @@ namespace Minecraft_Launcher
                 {
                     if (s.Length > 2)
                     {
-                        if (!tosave.Contains($"{account[0]}|{account[1]}"))
+                        if (!tosave.Contains($"|{account[1]}|"))
                         {
 
                             tosave += s + "\r\n";
@@ -1026,6 +1027,7 @@ namespace Minecraft_Launcher
             if (isnew)
             {
                 button4.Visible =false;
+                buttondelprof.Visible = false;
                 textBox1.Text = "";
                 
                 labelprof.Text = "Create new profile";
@@ -1036,6 +1038,7 @@ namespace Minecraft_Launcher
             else
             {
                 button4.Visible = true;
+                buttondelprof.Visible = true;
                 textBox1.Text = comboBoxprofiles.SelectedItem.ToString().Substring(7);
                 labelprof.Text = "Profile editor";
                 button3.Text = "Save profile";
@@ -1134,6 +1137,9 @@ namespace Minecraft_Launcher
                     Directory.CreateDirectory($"{launcherdir}\\profiles\\{textBox1.Text}");
                     refreshversions();
                     comboBoxprofiles.SelectedItem = "Custom "+textBox1.Text;
+                    selver = comboBoxprofiles.SelectedItem.ToString();
+                    savecfg(gencfg(false));
+                    labelwelcome.Text = "Welcome, " + account[0] + "\r\nReady to launch " + selver;
                 }
                 else
                 {
@@ -1165,8 +1171,19 @@ namespace Minecraft_Launcher
                     File.WriteAllText(configsdir + "\\profiles.mks", tosave);
                     refreshversions();
                     comboBoxprofiles.SelectedItem = "Custom " + textBox1.Text;
-
+                    selver = comboBoxprofiles.SelectedItem.ToString();
+                    savecfg(gencfg(false));
+                    labelwelcome.Text = "Welcome, " + account[0] + "\r\nReady to launch " + selver;
                 }
+                if (panelprofiles.Visible)
+                {
+                    panelprofiles.Visible = false;
+                    panelnews.Visible = true;
+                    return;
+                }
+                panelaccount.Visible = false;
+                panelnews.Visible = false;
+                panelprofiles.Visible = true;
             }
             catch (Exception) { MessageBox.Show("Select version"); }
         }
@@ -1178,9 +1195,74 @@ namespace Minecraft_Launcher
 
         private void comboBoxprofiles_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            this.selver = this.comboBoxprofiles.SelectedItem.ToString();
-            this.savecfg(this.gencfg(false));
-            this.labelwelcome.Text = "Welcome, " + this.account[0] + "\r\nReady to launch " + this.selver;
+            selver = comboBoxprofiles.SelectedItem.ToString();
+            savecfg(gencfg(false));
+            labelwelcome.Text = "Welcome, " + account[0] + "\r\nReady to launch " + selver;
+        }
+
+        private void buttondelprof_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Directory.Delete($"{launcherdir}\\profiles\\{oldprofname}", true);
+
+                string tosave = "";
+                foreach (string modver in File.ReadAllLines(configsdir + "\\profiles.mks"))
+                {
+                    if (!modver.StartsWith(oldprofname + "|"))
+                    {
+                        if (modver.Contains("|"))
+                        {
+                            tosave += modver + "\r\n";
+                        }
+                    }
+                }
+                File.WriteAllText(configsdir + "\\profiles.mks", tosave);
+
+                selver = "Release 1.20.6";
+                refreshversions();
+                comboBoxprofiles.SelectedItem = selver;
+                savecfg(gencfg(false));
+                labelwelcome.Text = "Welcome, " + account[0] + "\r\nReady to launch " + selver;
+                if (panelprofiles.Visible)
+                {
+                    panelprofiles.Visible = false;
+                    panelnews.Visible = true;
+                    return;
+                }
+                panelaccount.Visible = false;
+                panelnews.Visible = false;
+                panelprofiles.Visible = true;
+                
+            }
+            catch (Exception ex) {
+                MessageBox.Show("Unknown error: " + ex.Message, "Delete profile error");
+            }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DialogResult result = MessageBox.Show(
+    "This will delete all your versions and mc settings (excluding profiles). After deleting launcher will automatically restart. Do you want to proceed?",
+    "Confirmation",    
+    MessageBoxButtons.YesNo,     
+    MessageBoxIcon.Question 
+);
+
+                if (result == DialogResult.Yes)
+                {
+                    Directory.Delete($"{launcherdir}\\game", true);
+                    Directory.Delete($"{launcherdir}\\jre", true);
+                    init();
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unknown error: " + ex.Message, "Delete profile error");
+            }
         }
     }
 }
