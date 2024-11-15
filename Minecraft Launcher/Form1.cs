@@ -27,16 +27,11 @@ namespace Minecraft_Launcher
         public static string url = "mksteam.ovh";
         public static string launcherdir = System.IO.Directory.GetCurrentDirectory();
         public static string configsdir = $"{System.IO.Directory.GetCurrentDirectory()}\\configs";
-
         public static string javapath = $"{System.IO.Directory.GetCurrentDirectory()}\\jre\\";
-
         string[] config = { "ram", "lastver", "acc" };
-
         void savecfg(string cfg)
         {
-
             File.WriteAllText(configsdir + "\\settings.mks", cfg);
-            
         }
         string gencfg(bool isnew)
         {
@@ -57,7 +52,7 @@ namespace Minecraft_Launcher
                             retval += s + ";n|cracked\r\n";
                             break;
                     }
-                    
+
                 }
             }
             else
@@ -85,7 +80,7 @@ namespace Minecraft_Launcher
         string[] account = { "n", "cracked", "cracked" };
         string ram = "2048";
         string selver = "Release 1.20.6";
-        int version = 10;
+        int version = 11;
         async void init()
         {
             base.Size = new Size(902, 578);
@@ -187,9 +182,9 @@ namespace Minecraft_Launcher
                     account[1] = cfg.Split(';')[1].Split('|')[1];
                 }
             }
-            
-            
-            
+
+
+
             labelloading.Text = "Checking accounts...";
             await Task.Delay(10);
             if (account[0] == "n")
@@ -258,7 +253,7 @@ namespace Minecraft_Launcher
             panelloading.Visible = false;
             panelmain.Visible = true;
         }
-         void refreshversions()
+        void refreshversions()
         {
             comboBoxprofiles.Items.Clear();
             foreach (string ver in File.ReadAllLines(launcherdir + "\\vers.txt"))
@@ -272,10 +267,10 @@ namespace Minecraft_Launcher
         }
         string accesstoken = "cracked";
         WebClient webClient = new WebClient();
-        
-        private async void Form1_Load(object sender, EventArgs e)
+
+        private void Form1_Load(object sender, EventArgs e)
         {
-            
+
             init();
         }
         bool skipcheck = true;
@@ -291,7 +286,7 @@ namespace Minecraft_Launcher
                 if (!deatach)
                 {
                     java.Kill();
-                    
+
                     return;
                 }
                 deatach = false;
@@ -300,11 +295,9 @@ namespace Minecraft_Launcher
 
                 if (comboBoxprofiles.SelectedItem.ToString().StartsWith("Custom"))
                 {
-                 
 
                     string profilename = comboBoxprofiles.SelectedItem.ToString().Substring(7);
                     string gamever = "";
-
 
                     foreach (string modver in File.ReadAllLines(configsdir + "\\profiles.mks"))
                     {
@@ -318,7 +311,6 @@ namespace Minecraft_Launcher
                         MessageBox.Show("Cannot find version");
                         return;
                     }
-
 
                     string[] verindex = { };
                     foreach (string ver in File.ReadAllLines(launcherdir + "\\vers.txt"))
@@ -334,7 +326,6 @@ namespace Minecraft_Launcher
                         return;
                     }
 
-
                     if (url != "offline")
                     {
                         skipcheck = false;
@@ -348,12 +339,8 @@ namespace Minecraft_Launcher
                                 string[] file = (filen.Replace("\r", "") + "|jre").Split('|');
                                 files.Add(file);
                                 maxsizef += float.Parse(file[2]);
-                                //i tu liczenie plikow + dodanie ich do array
-                                //potem bedzie pobieranie i ladnie pokaze progress
-                                //oczywiscie najpierw policzy pliki gry + jave
                             }
                         }
-
                         foreach (string filen in webClient.DownloadString($"http://{url}/nmlauncher/files/v/{verindex[1]}/list.txt").Split('\n'))
                         {
                             if (filen.Length > 2)
@@ -363,111 +350,105 @@ namespace Minecraft_Launcher
                                 maxsizef += float.Parse(file[2]);
                             }
                         }
-
-                        maxsizef = maxsizef / 1000000; //konwersja do MB
+                        maxsizef = maxsizef / 1000000;
                         float dwnlsizef = 0;
                         progressBarmain.Minimum = 0;
                         progressBarmain.Value = 0;
                         progressBarmain.Maximum = (int)maxsizef;
-
-
-
                         webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(ProgressChanged);
                         webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(Completed);
                         foreach (string[] file in files)
                         {
-                            if (!skipcheck)
+                            if (skipcheck)
                             {
-                                if (!deatach)
+                                continue;
+                            }
+                            if (!deatach)
+                            {
+                                bool amicool = false;
+                                if (file[3] == "jre")
                                 {
+                                    int wl = Path.GetFileName($"{javapath}{verindex[2]}\\{file[0]}").Length + 1;
+                                    string directory = $"{javapath}{verindex[2]}\\{file[0]}".Remove($"{javapath}{verindex[2]}\\{file[0]}".Length - wl, wl);
 
-                                    float oldbytes = 0;
-
-                                    if (file[3] == "jre")
+                                    if (!Directory.Exists(directory))
                                     {
-                                        int wl = Path.GetFileName($"{javapath}{verindex[2]}\\{file[0]}").Length + 1;
-                                        string directory = $"{javapath}{verindex[2]}\\{file[0]}".Remove($"{javapath}{verindex[2]}\\{file[0]}".Length - wl, wl);
+                                        Directory.CreateDirectory(directory);
+                                    }
 
-                                        if (!Directory.Exists(directory))
-                                        {
-                                            Directory.CreateDirectory(directory);
-                                        }
-
-                                        if (File.Exists($"{javapath}{verindex[2]}\\{file[0]}"))
-                                        {
-                                            if (CalculateMD5($"{javapath}{verindex[2]}\\{file[0]}") != file[1])
-                                            {
-
-                                                await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/jre/{verindex[2]}/{file[0]}", $"{javapath}{verindex[2]}\\{file[0]}");
-                                            }
-                                            else
-                                            {
-                                                //plik jest cool shit
-                                            }
-                                        }
-                                        else
+                                    if (File.Exists($"{javapath}{verindex[2]}\\{file[0]}"))
+                                    {
+                                        if (await CalculateMD5($"{javapath}{verindex[2]}\\{file[0]}") != file[1])
                                         {
                                             await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/jre/{verindex[2]}/{file[0]}", $"{javapath}{verindex[2]}\\{file[0]}");
                                         }
-
+                                        else
+                                        {
+                                            amicool = true;
+                                        }
                                     }
                                     else
                                     {
+                                        await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/jre/{verindex[2]}/{file[0]}", $"{javapath}{verindex[2]}\\{file[0]}");
+                                    }
 
-                                        int wl = Path.GetFileName($"{launcherdir}\\profiles\\{profilename}\\{file[0]}").Length + 1;
-                                        string directory = $"{launcherdir}\\profiles\\{profilename}\\{file[0]}".Remove($"{launcherdir}\\profiles\\{profilename}\\{file[0]}".Length - wl, wl);
-                                        if (!Directory.Exists(directory))
+                                }
+                                else
+                                {
+                                    int wl = Path.GetFileName($"{launcherdir}\\profiles\\{profilename}\\{file[0]}").Length + 1;
+                                    string directory = $"{launcherdir}\\profiles\\{profilename}\\{file[0]}".Remove($"{launcherdir}\\profiles\\{profilename}\\{file[0]}".Length - wl, wl);
+                                    if (!Directory.Exists(directory))
+                                    {
+                                        Directory.CreateDirectory(directory);
+                                    }
+                                    if (File.Exists($"{launcherdir}\\profiles\\{profilename}\\{file[0]}"))
+                                    {
+                                        if (await CalculateMD5($"{launcherdir}\\profiles\\{profilename}\\{file[0]}") != file[1])
                                         {
-                                            Directory.CreateDirectory(directory);
-                                        }
-                                        if (File.Exists($"{launcherdir}\\profiles\\{profilename}\\{file[0]}"))
-                                        {
-                                            if (CalculateMD5($"{launcherdir}\\profiles\\{profilename}\\{file[0]}") != file[1])
-                                            {
-
-                                                await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/v/{verindex[1]}/{file[0]}", $"{launcherdir}\\profiles\\{profilename}\\{file[0]}");
-                                            }
+                                            await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/v/{verindex[1]}/{file[0]}", $"{launcherdir}\\profiles\\{profilename}\\{file[0]}");
                                         }
                                         else
                                         {
-                                            bool skip = false;
-                                            if (File.Exists($"{launcherdir}\\game\\{file[0]}"))
+                                            amicool = true;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        bool skip = false;
+                                        if (File.Exists($"{launcherdir}\\game\\{file[0]}"))
+                                        {
+                                            if (await CalculateMD5($"{launcherdir}\\game\\{file[0]}") == file[1])
                                             {
-                                                if (CalculateMD5($"{launcherdir}\\game\\{file[0]}") == file[1])
-                                                {
-                                                    File.Copy($"{launcherdir}\\game\\{file[0]}", $"{launcherdir}\\profiles\\{profilename}\\{file[0]}");
-                                                    skip = true;
-                                                }
-                                            }
-
-
-                                            if (!skip)
-                                            {
-                                                await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/v/{verindex[1]}/{file[0]}", $"{launcherdir}\\profiles\\{profilename}\\{file[0]}");
+                                                File.Copy($"{launcherdir}\\game\\{file[0]}", $"{launcherdir}\\profiles\\{profilename}\\{file[0]}");
+                                                skip = true;
                                             }
                                         }
-
-
+                                        if (!skip)
+                                        {
+                                            await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/v/{verindex[1]}/{file[0]}", $"{launcherdir}\\profiles\\{profilename}\\{file[0]}");
+                                        }
                                     }
-                                    //MessageBox.Show((float.Parse(file[2]) / 1000000f).ToString());
-                                    dwnlsizef += float.Parse(file[2]) / 1000000f;
-                                    progressBarmain.Value = (int)dwnlsizef;
+                                }
+                                //MessageBox.Show((float.Parse(file[2]) / 1000000f).ToString());
+                                dwnlsizef += float.Parse(file[2]) / 1000000f;
+                                progressBarmain.Value = (int)dwnlsizef;
+                                if (amicool)
+                                {
+                                    buttonplay.Text = $"Checked {progressBarmain.Value}/{progressBarmain.Maximum}MB {progressBarmain.Value * 100 / progressBarmain.Maximum}%\r\nClick to skip";
+                                }
+                                else
+                                {
                                     buttonplay.Text = $"Downloading {progressBarmain.Value}/{progressBarmain.Maximum}MB {progressBarmain.Value * 100 / progressBarmain.Maximum}%\r\nClick to skip";
                                 }
                             }
                         }
                         buttonplay.Text = $"Checked files";
                         await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/v/{verindex[1]}/args.txt", $"{launcherdir}\\{verindex[1]}.args");
-
                     }
                     else
                     {
                         buttonplay.Text = $"Can't check files because of offline mode";
                     }
-
-                    //wlaczanie gry def
-
-
                     if (!deatach)
                     {
                         progressBarmain.Visible = false;
@@ -515,14 +496,9 @@ namespace Minecraft_Launcher
                             }
                             await Task.Delay(1000);
                         }
-
-                        //TU PO DEATACH/EXIT
                     }
-
                     buttonplay.Text = "Play";
-
                     progressBarmain.Visible = false;
-
                 }
                 else
                 {
@@ -552,9 +528,6 @@ namespace Minecraft_Launcher
                                 string[] file = (filen.Replace("\r", "") + "|jre").Split('|');
                                 files.Add(file);
                                 maxsizef += float.Parse(file[2]);
-                                //i tu liczenie plikow + dodanie ich do array
-                                //potem bedzie pobieranie i ladnie pokaze progress
-                                //oczywiscie najpierw policzy pliki gry + jave
                             }
                         }
 
@@ -574,8 +547,6 @@ namespace Minecraft_Launcher
                         progressBarmain.Value = 0;
                         progressBarmain.Maximum = (int)maxsizef;
 
-
-
                         webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(ProgressChanged);
                         webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(Completed);
                         foreach (string[] file in files)
@@ -584,8 +555,7 @@ namespace Minecraft_Launcher
                             {
                                 if (!deatach)
                                 {
-                                    float oldbytes = 0;
-
+                                    bool amicool = false;
                                     if (file[3] == "jre")
                                     {
                                         int wl = Path.GetFileName($"{javapath}{verindex[2]}\\{file[0]}").Length + 1;
@@ -598,25 +568,23 @@ namespace Minecraft_Launcher
 
                                         if (File.Exists($"{javapath}{verindex[2]}\\{file[0]}"))
                                         {
-                                            if (CalculateMD5($"{javapath}{verindex[2]}\\{file[0]}") != file[1])
+                                            if (await CalculateMD5($"{javapath}{verindex[2]}\\{file[0]}") != file[1])
                                             {
 
                                                 await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/jre/{verindex[2]}/{file[0]}", $"{javapath}{verindex[2]}\\{file[0]}");
                                             }
                                             else
                                             {
-                                                //plik jest cool shit
+                                                amicool = true;
                                             }
                                         }
                                         else
                                         {
                                             await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/jre/{verindex[2]}/{file[0]}", $"{javapath}{verindex[2]}\\{file[0]}");
                                         }
-
                                     }
                                     else
                                     {
-
                                         int wl = Path.GetFileName($"{launcherdir}\\game\\{file[0]}").Length + 1;
                                         string directory = $"{launcherdir}\\game\\{file[0]}".Remove($"{launcherdir}\\game\\{file[0]}".Length - wl, wl);
                                         if (!Directory.Exists(directory))
@@ -625,10 +593,13 @@ namespace Minecraft_Launcher
                                         }
                                         if (File.Exists($"{launcherdir}\\game\\{file[0]}"))
                                         {
-                                            if (CalculateMD5($"{launcherdir}\\game\\{file[0]}") != file[1])
+                                            if (await CalculateMD5($"{launcherdir}\\game\\{file[0]}") != file[1])
                                             {
-
                                                 await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/v/{verindex[1]}/{file[0]}", $"{launcherdir}\\game\\{file[0]}");
+                                            }
+                                            else
+                                            {
+                                                amicool = true;
                                             }
                                         }
                                         else
@@ -638,24 +609,27 @@ namespace Minecraft_Launcher
 
 
                                     }
-                                    //MessageBox.Show((float.Parse(file[2]) / 1000000f).ToString());
                                     dwnlsizef += float.Parse(file[2]) / 1000000f;
                                     progressBarmain.Value = (int)dwnlsizef;
                                     buttonplay.Text = $"Downloading {progressBarmain.Value}/{progressBarmain.Maximum}MB {progressBarmain.Value * 100 / progressBarmain.Maximum}%\r\nClick to skip";
+                                    if (amicool)
+                                    {
+                                        buttonplay.Text = $"Checked {progressBarmain.Value}/{progressBarmain.Maximum}MB {progressBarmain.Value * 100 / progressBarmain.Maximum}%\r\nClick to skip";
+                                    }
+                                    else
+                                    {
+                                        buttonplay.Text = $"Downloading {progressBarmain.Value}/{progressBarmain.Maximum}MB {progressBarmain.Value * 100 / progressBarmain.Maximum}%\r\nClick to skip";
+                                    }
                                 }
                             }
                         }
                         buttonplay.Text = $"Checked files";
                         await webClient.DownloadFileTaskAsync($"http://{url}/nmlauncher/files/v/{verindex[1]}/args.txt", $"{launcherdir}\\{verindex[1]}.args");
-
                     }
                     else
                     {
                         buttonplay.Text = $"Can't check files because of offline mode";
                     }
-                    //wlaczanie gry def
-
-
                     if (!deatach)
                     {
                         progressBarmain.Visible = false;
@@ -703,8 +677,6 @@ namespace Minecraft_Launcher
                             }
                             await Task.Delay(1000);
                         }
-
-                        //TU PO DEATACH/EXIT
                     }
 
                     buttonplay.Text = "Play";
@@ -728,7 +700,7 @@ namespace Minecraft_Launcher
                 progressBarmain.Visible = false;
                 deatach = true;
             }
-          
+
         }
         Process java;
         float oldbytes = 0;
@@ -743,7 +715,7 @@ namespace Minecraft_Launcher
                 {
                     while (!stream.EndOfStream)
                     {
-                        stream2 = stream2 + "\r\n" + stream.ReadLine();
+                        stream2 = stream2 + "\r\n" + await stream.ReadLineAsync();
                     }
                 }
                 catch (Exception) { }
@@ -754,7 +726,7 @@ namespace Minecraft_Launcher
 
         private void ProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            
+
             progressBarmain.Value += (int)((e.BytesReceived / 1000000) - oldbytes);
             buttonplay.Text = $"Downloading {progressBarmain.Value}/{progressBarmain.Maximum}MB {progressBarmain.Value * 100 / progressBarmain.Maximum}%\r\nClick to skip";
             oldbytes = e.BytesReceived / 1000000;
@@ -767,15 +739,22 @@ namespace Minecraft_Launcher
         }
         Regex rg = new Regex("^[a-zA-Z0-9_]{2,16}$");
         Regex rgm = new Regex("^[a-zA-Z0-9_ -.]{1,20}$");
-        static string CalculateMD5(string filename)
+        public static async Task<string> CalculateMD5(string filename)
         {
             using (var md5 = MD5.Create())
+            using (var stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, useAsync: true))
             {
-                using (var stream = File.OpenRead(filename))
+                var buffer = new byte[8192];
+                int bytesRead;
+                while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                 {
-                    var hash = md5.ComputeHash(stream);
-                    return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+                    md5.TransformBlock(buffer, 0, bytesRead, null, 0);
                 }
+
+                // Finalize the hash computation
+                md5.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
+
+                return BitConverter.ToString(md5.Hash).Replace("-", "").ToLowerInvariant();
             }
         }
         private void button1_Click(object sender, EventArgs e)
@@ -783,7 +762,7 @@ namespace Minecraft_Launcher
             if (textBoxlogincrack.Text.Length < 3 || textBoxlogincrack.Text.Length > 16)
             {
                 MessageBox.Show("Username must be between 3-16 characters", "Login error");
-                return; 
+                return;
             }
             if (!rg.IsMatch(textBoxlogincrack.Text))
             {
@@ -823,70 +802,72 @@ namespace Minecraft_Launcher
             }
             textBoxram.Text = ram;
         }
-        
+
 
         private void buttoncrkdel_Click(object sender, EventArgs e)
         {
             try
             {
                 if (account[1] == "cracked")
-            {
-                if (account[0] == comboBoxcracked.SelectedItem.ToString())
                 {
-                    MessageBox.Show("You cannot delete the account you are logged in to", "Account deletion");
-                    return;
+                    if (account[0] == comboBoxcracked.SelectedItem.ToString())
+                    {
+                        MessageBox.Show("You cannot delete the account you are logged in to", "Account deletion");
+                        return;
+                    }
                 }
-            }
-            string tosave = "";
-            foreach (string s in File.ReadAllLines(configsdir + "\\accounts.mks"))
-            {
-                if (!s.Contains($"{comboBoxcracked.SelectedItem.ToString()}|cracked"))
+                string tosave = "";
+                foreach (string s in File.ReadAllLines(configsdir + "\\accounts.mks"))
                 {
-                    tosave += s + "\r\n";
+                    if (!s.Contains($"{comboBoxcracked.SelectedItem.ToString()}|cracked"))
+                    {
+                        tosave += s + "\r\n";
+                    }
                 }
+                File.WriteAllText(configsdir + "\\accounts.mks", tosave);
+                refreshaccswitch();
             }
-            File.WriteAllText(configsdir + "\\accounts.mks", tosave);
-            refreshaccswitch();
-        }
             catch (Exception) { }
-}
+        }
 
         private void buttonmsdel_Click(object sender, EventArgs e)
         {
-    try { 
-            if (account[1] != "cracked")
+            try
             {
-                if ($"{account[0]}                                        {account[1]}" == comboBoxmicrosoft.SelectedItem.ToString())
+                if (account[1] != "cracked")
                 {
-                    MessageBox.Show("You cannot delete the account you are logged in to", "Account deletion");
-                    return;
+                    if ($"{account[0]}                                        {account[1]}" == comboBoxmicrosoft.SelectedItem.ToString())
+                    {
+                        MessageBox.Show("You cannot delete the account you are logged in to", "Account deletion");
+                        return;
+                    }
                 }
-            }
-            string tosave = "";
-            foreach (string s in File.ReadAllLines(configsdir + "\\accounts.mks"))
-            {
-                if (!s.Contains(comboBoxmicrosoft.SelectedItem.ToString().Replace("                                        ", "|")))
+                string tosave = "";
+                foreach (string s in File.ReadAllLines(configsdir + "\\accounts.mks"))
                 {
-                    tosave += s + "\r\n";
+                    if (!s.Contains(comboBoxmicrosoft.SelectedItem.ToString().Replace("                                        ", "|")))
+                    {
+                        tosave += s + "\r\n";
+                    }
                 }
+                File.WriteAllText(configsdir + "\\accounts.mks", tosave);
+                refreshaccswitch();
             }
-            File.WriteAllText(configsdir + "\\accounts.mks", tosave);
-            refreshaccswitch();
-        }
             catch (Exception) { }
-}
+        }
 
         private void buttoncrklogin_Click(object sender, EventArgs e)
         {
-            try { 
-            account[2] = "cracked";
-            account[1] = "cracked";
-            account[0] = comboBoxcracked.SelectedItem.ToString();
-            savecfg(gencfg(false));
-            refreshaccswitch();
-        }
+            try
+            {
+                account[2] = "cracked";
+                account[1] = "cracked";
+                account[0] = comboBoxcracked.SelectedItem.ToString();
+                savecfg(gencfg(false));
+                refreshaccswitch();
+            }
             catch (Exception) { }
-}
+        }
 
         private void buttoncrkadd_Click(object sender, EventArgs e)
         {
@@ -950,7 +931,7 @@ namespace Minecraft_Launcher
                         refresh = s.Split('|')[2];
                     }
                 }
-              
+
                 string[] creds = mslogin.RefreshAccountData(refresh).Split('|');
                 if (creds[1] == "error")
                 {
@@ -1002,12 +983,12 @@ namespace Minecraft_Launcher
             account[2] = creds[2];
             accesstoken = creds[3];
             savecfg(gencfg(false));
-      
+
             File.WriteAllText(configsdir + "\\accounts.mks", $"{account[0]}|{account[1]}|{account[2]}");
             init();
         }
 
-   
+
 
         private void buttonswitchuser_Click(object sender, EventArgs e)
         {
@@ -1024,7 +1005,7 @@ namespace Minecraft_Launcher
 
         }
         Regex num = new Regex(@"^\d+$");
-      
+
 
         private void buttonsaveset_Click_1(object sender, EventArgs e)
         {
@@ -1046,14 +1027,14 @@ namespace Minecraft_Launcher
             }
             if (isnew)
             {
-                button4.Visible =false;
+                button4.Visible = false;
                 buttondelprof.Visible = false;
                 textBox1.Text = "";
-                
+
                 labelprof.Text = "Create new profile";
                 button3.Text = "Create profile";
                 textBoxprofilefolder.Text = "Not created";
-                
+
             }
             else
             {
@@ -1062,7 +1043,7 @@ namespace Minecraft_Launcher
                 textBox1.Text = comboBoxprofiles.SelectedItem.ToString().Substring(7);
                 labelprof.Text = "Profile editor";
                 button3.Text = "Save profile";
-                textBoxprofilefolder.Text =$"{launcherdir}\\profiles\\{comboBoxprofiles.SelectedItem.ToString()}".Replace("profiles\\Custom ", "profiles\\");
+                textBoxprofilefolder.Text = $"{launcherdir}\\profiles\\{comboBoxprofiles.SelectedItem.ToString()}".Replace("profiles\\Custom ", "profiles\\");
                 foreach (string modver in File.ReadAllLines(configsdir + "\\profiles.mks"))
                 {
                     if (modver.StartsWith(oldprofname + "|"))
@@ -1072,7 +1053,7 @@ namespace Minecraft_Launcher
                     }
                 }
             }
-            
+
         }
 
         private void buttonnewprof_Click(object sender, EventArgs e)
@@ -1101,8 +1082,8 @@ namespace Minecraft_Launcher
             profpagecfg(false);
 
 
-           
-            
+
+
 
 
             if (panelprofiles.Visible)
@@ -1125,7 +1106,7 @@ namespace Minecraft_Launcher
                     MessageBox.Show("Select version");
                     return;
                 }
-            
+
 
 
                 textBox1.Text = textBox1.Text.Replace("  ", " ");
@@ -1135,7 +1116,7 @@ namespace Minecraft_Launcher
                     MessageBox.Show("Profile can only contain a-Z 0-9 characters and must be 3-16 characters long");
                     return;
                 }
-            
+
                 if (button3.Text == "Create profile")
                 {
                     if (Directory.Exists($"{launcherdir}\\profiles\\{textBox1.Text}"))
@@ -1143,8 +1124,8 @@ namespace Minecraft_Launcher
                         MessageBox.Show("Profile with this name already exists");
                         return;
                     }
-                
-                
+
+
                     string tosave = "";
                     foreach (string modver in File.ReadAllLines(configsdir + "\\profiles.mks"))
                     {
@@ -1156,7 +1137,7 @@ namespace Minecraft_Launcher
                     File.WriteAllText(configsdir + "\\profiles.mks", tosave + $"{textBox1.Text}|{comboBox1.Text}");
                     Directory.CreateDirectory($"{launcherdir}\\profiles\\{textBox1.Text}");
                     refreshversions();
-                    comboBoxprofiles.SelectedItem = "Custom "+textBox1.Text;
+                    comboBoxprofiles.SelectedItem = "Custom " + textBox1.Text;
                     selver = comboBoxprofiles.SelectedItem.ToString();
                     savecfg(gencfg(false));
                     labelwelcome.Text = "Welcome, " + account[0] + "\r\nReady to launch " + selver;
@@ -1173,7 +1154,7 @@ namespace Minecraft_Launcher
                         }
                         Directory.Move($"{launcherdir}\\profiles\\{oldprofname}", $"{launcherdir}\\profiles\\{textBox1.Text}");
 
-                    
+
                     }
 
                     string tosave = "";
@@ -1253,23 +1234,22 @@ namespace Minecraft_Launcher
                 panelaccount.Visible = false;
                 panelnews.Visible = false;
                 panelprofiles.Visible = true;
-                
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Unknown error: " + ex.Message, "Delete profile error");
             }
         }
-
         private void button5_Click(object sender, EventArgs e)
         {
             try
             {
                 DialogResult result = MessageBox.Show(
-    "This will delete all your versions and mc settings (excluding profiles). After deleting launcher will automatically restart. Do you want to proceed?",
-    "Confirmation",    
-    MessageBoxButtons.YesNo,     
-    MessageBoxIcon.Question 
-);
+                    "This will delete all your versions and mc settings (excluding profiles). After deleting launcher will automatically restart. Do you want to proceed?",
+                    "Confirmation",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question
+                );
 
                 if (result == DialogResult.Yes)
                 {
@@ -1277,7 +1257,6 @@ namespace Minecraft_Launcher
                     Directory.Delete($"{launcherdir}\\jre", true);
                     init();
                 }
-                
             }
             catch (Exception ex)
             {
@@ -1286,4 +1265,3 @@ namespace Minecraft_Launcher
         }
     }
 }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
