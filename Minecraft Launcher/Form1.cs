@@ -80,7 +80,7 @@ namespace Minecraft_Launcher
         string[] account = { "n", "cracked", "cracked" };
         string ram = "2048";
         string selver = "Release 1.20.6";
-        int version = 11;
+        int version = 12;
         async void init()
         {
             base.Size = new Size(902, 578);
@@ -106,19 +106,68 @@ namespace Minecraft_Launcher
             labelloading.Text = "Checking server connection...";
             try
             {
+
                 if (await webClient.DownloadStringTaskAsync($"http://{url}/connect.txt") != "sex")
                 {
-                    labelloading.Text = "Trying offline mode...";
-                    await Task.Delay(100);
-                    url = "offline";
+                    labelloading.Text = "Checking server connection (bypass)...";
+                    url = "109.231.31.129.koba.pl";
+                    if (await webClient.DownloadStringTaskAsync($"http://{url}/connect.txt") != "sex")
+                    {
+                        labelloading.Text = "Checking server connection (bypass v2)...";
+                        url = "109.231.31.129";
+                        if (await webClient.DownloadStringTaskAsync($"http://{url}/connect.txt") != "sex")
+                        {
+                            labelloading.Text = "Trying offline mode...";
+                            await Task.Delay(100);
+                            url = "offline";
+                        }
+                    }
                 }
             }
             catch (Exception)
             {
-                labelloading.Text = "Trying offline mode...";
-                await Task.Delay(100);
-                url = "offline";
+                labelloading.Text = "Checking server connection (bypass ex1)...";
+                url = "109.231.31.129.koba.pl";
+                try
+                {
+                    if (await webClient.DownloadStringTaskAsync($"http://{url}/connect.txt") != "sex")
+                    {
+                        labelloading.Text = "Checking server connection (bypass v2ex1)...";
+                        url = "109.231.31.129";
+                        if (await webClient.DownloadStringTaskAsync($"http://{url}/connect.txt") != "sex")
+                        {
+                            labelloading.Text = "Trying offline mode...";
+                            await Task.Delay(100);
+                            url = "offline";
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    labelloading.Text = "Checking server connection (bypass v2ex2)...";
+                    url = "109.231.31.129";
+                    try
+                    {
+                        if (await webClient.DownloadStringTaskAsync($"http://{url}/connect.txt") != "sex")
+                        {
+                            labelloading.Text = "Trying offline mode...";
+                            await Task.Delay(100);
+                            url = "offline";
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        labelloading.Text = "Trying offline mode...";
+                        await Task.Delay(100);
+                        url = "offline";
+                    }
+                }
             }
+
+
+
+
+
             if (url != "offline")
             {
                 if (int.Parse(await webClient.DownloadStringTaskAsync($"http://{url}/nmlauncher/files/l/last.ver")) > version)
@@ -700,7 +749,7 @@ namespace Minecraft_Launcher
                 progressBarmain.Visible = false;
                 deatach = true;
             }
-
+            skipcheck = true;
         }
         Process java;
         float oldbytes = 0;
