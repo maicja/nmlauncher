@@ -80,7 +80,7 @@ namespace Minecraft_Launcher
         string[] account = { "n", "cracked", "cracked" };
         string ram = "2048";
         string selver = "Release 1.20.6";
-        int version = 12;
+        int version = 13;
         async void init()
         {
             base.Size = new Size(902, 578);
@@ -1002,11 +1002,11 @@ namespace Minecraft_Launcher
                         {
 
                             tosave += s + "\r\n";
-                            MessageBox.Show(s, "cool");
+                            //MessageBox.Show(s, "cool");
                         }
                         else
                         {
-                            MessageBox.Show(s, "skipped");
+                            //MessageBox.Show(s, "skipped");
                         }
                     }
                 }
