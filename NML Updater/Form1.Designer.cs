@@ -46,6 +46,7 @@
             this.statuslabel.TabIndex = 0;
             this.statuslabel.Text = "Checking connection...";
             this.statuslabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.statuslabel.Click += new System.EventHandler(this.statuslabel_Click);
             // 
             // panel1
             // 

@@ -29,7 +29,7 @@ namespace Minecraft_Launcher
                 //getting mstoken + refreshtoken
                 string spamrequest = $"client_id=499546d9-bbfe-4b9b-a086-eb3d75afb78f&code={devicecode}&grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Adevice_code";
                 WebRequest webRequest = WebRequest.Create("https://login.microsoftonline.com/consumers/oauth2/v2.0/token");
-                webRequest.Timeout = 5000;
+                webRequest.Timeout = 15000;
                 webRequest.Method = "POST";
                 webRequest.Headers.Add("Cookie", "esctx=PAQABAAEAAAAmoFfGtYxvRrNriQdPKIZ-N1P_MEcnyzSjOqDSJiFM7mL9hTzkvRZDiQnF8oxfy0UDFCE9QVbyMFtCPdcO7LTrN_eGz0Fuk4sXL38g7azDkEZ82a4qVcU6FQsDj0wGq0tu4dHlTuSQU_n5UY5vnjtNLyvxkfvQixzDk-GA7-flAXkwJhTHDb-gnlM60MPN54sgAA; stsservicecookie=estsfd; fpc=Aq7Yu-WVxD9KsIRK63eSKH1jHbnPFAAAALiBXN0OAAAA; x-ms-gateway-slice=estsfd");
                 webRequest.ContentLength = (long)spamrequest.Length;
@@ -46,7 +46,7 @@ namespace Minecraft_Launcher
                 //getting authenticate token
                 string authrequest = $"{{\r\n   \"Properties\" : {{\r\n      \"AuthMethod\" : \"RPS\",\r\n      \"RpsTicket\" : \"d={tokenspam}\",\r\n      \"SiteName\" : \"user.auth.xboxlive.com\"\r\n   }},\r\n   \"RelyingParty\" : \"http://auth.xboxlive.com\",\r\n   \"TokenType\" : \"JWT\"\r\n}}";
                 WebRequest authwebRequest = WebRequest.Create("https://user.auth.xboxlive.com/user/authenticate");
-                authwebRequest.Timeout = 5000;
+                authwebRequest.Timeout = 15000;
                 authwebRequest.Method = "POST";
                 authwebRequest.ContentType = "application/json";
                 authwebRequest.ContentLength = (long)authrequest.Length;
@@ -61,7 +61,7 @@ namespace Minecraft_Launcher
                 //getting authorizetoken + uhs
                 string authorizerequest = $"{{\r\n   \"Properties\" : {{\r\n      \"SandboxId\" : \"RETAIL\",\r\n      \"UserTokens\" : [\r\n         \"{authtoken}\"\r\n      ]\r\n   }},\r\n   \"RelyingParty\" : \"rp://api.minecraftservices.com/\",\r\n   \"TokenType\" : \"JWT\"\r\n}}";
                 WebRequest authorizewebRequest = WebRequest.Create("https://xsts.auth.xboxlive.com/xsts/authorize");
-                authorizewebRequest.Timeout = 5000;
+                authorizewebRequest.Timeout = 15000;
                 authorizewebRequest.Method = "POST";
                 authorizewebRequest.ContentType = "application/json";
                 authorizewebRequest.ContentLength = (long)authorizerequest.Length;
@@ -76,7 +76,7 @@ namespace Minecraft_Launcher
                 //getting minecraft accesstoken
                 string loginreqrequest = $"{{\r\n   \"platform\" : \"PC_LAUNCHER\",\r\n   \"xtoken\" : \"XBL3.0 x={uhs};{authorizetoken}\"\r\n}}";
                 WebRequest loginreqwebRequest = WebRequest.Create("https://api.minecraftservices.com/launcher/login");
-                loginreqwebRequest.Timeout = 5000;
+                loginreqwebRequest.Timeout = 15000;
                 loginreqwebRequest.Method = "POST";
                 loginreqwebRequest.ContentType = "application/json";
                 loginreqwebRequest.ContentLength = (long)loginreqrequest.Length;
@@ -127,7 +127,7 @@ namespace Minecraft_Launcher
                 //getting mstoken + refreshtoken
                 string spamrequest = $"client_id=499546d9-bbfe-4b9b-a086-eb3d75afb78f&grant_type=refresh_token&refresh_token={refreshtoken}";
                 WebRequest webRequest = WebRequest.Create("https://login.microsoftonline.com/consumers/oauth2/v2.0/token");
-                webRequest.Timeout = 5000;
+                webRequest.Timeout = 15000;
                 webRequest.Method = "POST";
                 webRequest.ContentLength = (long)spamrequest.Length;
                 StreamWriter streamWriter = new StreamWriter(webRequest.GetRequestStream());
@@ -141,7 +141,7 @@ namespace Minecraft_Launcher
                 //getting authenticate token
                 string authrequest = $"{{\r\n   \"Properties\" : {{\r\n      \"AuthMethod\" : \"RPS\",\r\n      \"RpsTicket\" : \"d={tokenspam}\",\r\n      \"SiteName\" : \"user.auth.xboxlive.com\"\r\n   }},\r\n   \"RelyingParty\" : \"http://auth.xboxlive.com\",\r\n   \"TokenType\" : \"JWT\"\r\n}}";
                 WebRequest authwebRequest = WebRequest.Create("https://user.auth.xboxlive.com/user/authenticate");
-                authwebRequest.Timeout = 5000;
+                authwebRequest.Timeout = 15000;
                 authwebRequest.Method = "POST";
                 authwebRequest.ContentType = "application/json";
                 authwebRequest.ContentLength = (long)authrequest.Length;
@@ -155,7 +155,7 @@ namespace Minecraft_Launcher
                 //getting authorizetoken + uhs
                 string authorizerequest = $"{{\r\n   \"Properties\" : {{\r\n      \"SandboxId\" : \"RETAIL\",\r\n      \"UserTokens\" : [\r\n         \"{authtoken}\"\r\n      ]\r\n   }},\r\n   \"RelyingParty\" : \"rp://api.minecraftservices.com/\",\r\n   \"TokenType\" : \"JWT\"\r\n}}";
                 WebRequest authorizewebRequest = WebRequest.Create("https://xsts.auth.xboxlive.com/xsts/authorize");
-                authorizewebRequest.Timeout = 5000;
+                authorizewebRequest.Timeout = 15000;
                 authorizewebRequest.Method = "POST";
                 authorizewebRequest.ContentType = "application/json";
                 authorizewebRequest.ContentLength = (long)authorizerequest.Length;
@@ -170,7 +170,7 @@ namespace Minecraft_Launcher
                 //getting mcaccesstoken
                 string loginreqrequest = $"{{\r\n   \"platform\" : \"PC_LAUNCHER\",\r\n   \"xtoken\" : \"XBL3.0 x={uhs};{authorizetoken}\"\r\n}}";
                 WebRequest loginreqwebRequest = WebRequest.Create("https://api.minecraftservices.com/launcher/login");
-                loginreqwebRequest.Timeout = 5000;
+                loginreqwebRequest.Timeout = 15000;
                 loginreqwebRequest.Method = "POST";
                 loginreqwebRequest.ContentType = "application/json";
                 loginreqwebRequest.ContentLength = (long)loginreqrequest.Length;

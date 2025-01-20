@@ -28,15 +28,15 @@ namespace NML_Updater
             try
             {
 
-                if (await client.DownloadStringTaskAsync($"http://{url}/connect.txt") != "sex")
+                if (await client.DownloadStringTaskAsync($"http://{url}/connect.txt") != "yup")
                 {
                     statuslabel.Text = "Checking server connection (bypass)...";
                     url = "109.231.31.129.koba.pl";
-                    if (await client.DownloadStringTaskAsync($"http://{url}/connect.txt") != "sex")
+                    if (await client.DownloadStringTaskAsync($"http://{url}/connect.txt") != "yup")
                     {
                         statuslabel.Text = "Checking server connection (bypass v2)...";
                         url = "109.231.31.129";
-                        if (await client.DownloadStringTaskAsync($"http://{url}/connect.txt") != "sex")
+                        if (await client.DownloadStringTaskAsync($"http://{url}/connect.txt") != "yup")
                         {
                             statuslabel.Text = "Cannot connect to the server!";
                             await Task.Delay(2000);
@@ -51,11 +51,11 @@ namespace NML_Updater
                 url = "109.231.31.129.koba.pl";
                 try
                 {
-                    if (await client.DownloadStringTaskAsync($"http://{url}/connect.txt") != "sex")
+                    if (await client.DownloadStringTaskAsync($"http://{url}/connect.txt") != "yup")
                     {
                         statuslabel.Text = "Checking server connection (bypass v2ex1)...";
                         url = "109.231.31.129";
-                        if (await client.DownloadStringTaskAsync($"http://{url}/connect.txt") != "sex")
+                        if (await client.DownloadStringTaskAsync($"http://{url}/connect.txt") != "yup")
                         {
                             statuslabel.Text = "Cannot connect to the server!";
                             await Task.Delay(2000);
@@ -69,7 +69,7 @@ namespace NML_Updater
                     url = "109.231.31.129";
                     try
                     {
-                        if (await client.DownloadStringTaskAsync($"http://{url}/connect.txt") != "sex")
+                        if (await client.DownloadStringTaskAsync($"http://{url}/connect.txt") != "yup")
                         {
                             statuslabel.Text = "Cannot connect to the server!";
                             await Task.Delay(2000);
@@ -94,6 +94,11 @@ namespace NML_Updater
             statuslabel.Text = "Launching...";
             Process.Start(launcherdir + "\\nmlauncher.exe");
             Application.Exit();
+        }
+
+        private void statuslabel_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

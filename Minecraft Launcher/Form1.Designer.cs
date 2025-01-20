@@ -42,6 +42,7 @@ namespace Minecraft_Launcher
             this.panelmain = new System.Windows.Forms.Panel();
             this.panelaccount = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.label11 = new System.Windows.Forms.Label();
             this.button5 = new System.Windows.Forms.Button();
             this.buttonsaveset = new System.Windows.Forms.Button();
             this.textBoxram = new System.Windows.Forms.TextBox();
@@ -87,7 +88,6 @@ namespace Minecraft_Launcher
             this.buttonplay = new System.Windows.Forms.Button();
             this.buttonswitchuser = new System.Windows.Forms.Button();
             this.progressBarmain = new System.Windows.Forms.ProgressBar();
-            this.label11 = new System.Windows.Forms.Label();
             this.panelloading.SuspendLayout();
             this.panellogin.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -268,6 +268,17 @@ namespace Minecraft_Launcher
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(704, 334);
             this.panel2.TabIndex = 0;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.BackColor = System.Drawing.Color.Transparent;
+            this.label11.ForeColor = System.Drawing.Color.White;
+            this.label11.Location = new System.Drawing.Point(440, 265);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(69, 13);
+            this.label11.TabIndex = 21;
+            this.label11.Text = "Versions:";
             // 
             // button5
             // 
@@ -748,23 +759,12 @@ namespace Minecraft_Launcher
             this.progressBarmain.TabIndex = 1;
             this.progressBarmain.Value = 3;
             // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.BackColor = System.Drawing.Color.Transparent;
-            this.label11.ForeColor = System.Drawing.Color.White;
-            this.label11.Location = new System.Drawing.Point(440, 265);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(69, 13);
-            this.label11.TabIndex = 21;
-            this.label11.Text = "Versions:";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
-            this.ClientSize = new System.Drawing.Size(1540, 845);
+            this.ClientSize = new System.Drawing.Size(1540, 1101);
             this.Controls.Add(this.panelloading);
             this.Controls.Add(this.panelmain);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;

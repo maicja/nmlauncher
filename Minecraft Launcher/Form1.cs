@@ -80,11 +80,12 @@ namespace Minecraft_Launcher
         string[] account = { "n", "cracked", "cracked" };
         string ram = "2048";
         string selver = "Release 1.20.6";
-        int version = 13;
+        int version = 15;
         async void init()
         {
             base.Size = new Size(902, 578);
             panelmain.Location = new Point(0, 0);
+
             panelloading.Location = new Point(0, 0);
             panelpostload.Location = new Point(151, 177);
             panellogin.Location = new Point(151, 177);
@@ -102,20 +103,22 @@ namespace Minecraft_Launcher
             panelprofiles.Visible = false;
             panelpostload.Visible = true;
             panelnews.Visible = true;
+    
+
 
             labelloading.Text = "Checking server connection...";
             try
             {
 
-                if (await webClient.DownloadStringTaskAsync($"http://{url}/connect.txt") != "sex")
+                if (await webClient.DownloadStringTaskAsync($"http://{url}/connect.txt") != "yup")
                 {
                     labelloading.Text = "Checking server connection (bypass)...";
                     url = "109.231.31.129.koba.pl";
-                    if (await webClient.DownloadStringTaskAsync($"http://{url}/connect.txt") != "sex")
+                    if (await webClient.DownloadStringTaskAsync($"http://{url}/connect.txt") != "yup")
                     {
                         labelloading.Text = "Checking server connection (bypass v2)...";
                         url = "109.231.31.129";
-                        if (await webClient.DownloadStringTaskAsync($"http://{url}/connect.txt") != "sex")
+                        if (await webClient.DownloadStringTaskAsync($"http://{url}/connect.txt") != "yup")
                         {
                             labelloading.Text = "Trying offline mode...";
                             await Task.Delay(100);
@@ -130,11 +133,11 @@ namespace Minecraft_Launcher
                 url = "109.231.31.129.koba.pl";
                 try
                 {
-                    if (await webClient.DownloadStringTaskAsync($"http://{url}/connect.txt") != "sex")
+                    if (await webClient.DownloadStringTaskAsync($"http://{url}/connect.txt") != "yup")
                     {
                         labelloading.Text = "Checking server connection (bypass v2ex1)...";
                         url = "109.231.31.129";
-                        if (await webClient.DownloadStringTaskAsync($"http://{url}/connect.txt") != "sex")
+                        if (await webClient.DownloadStringTaskAsync($"http://{url}/connect.txt") != "yup")
                         {
                             labelloading.Text = "Trying offline mode...";
                             await Task.Delay(100);
@@ -148,7 +151,7 @@ namespace Minecraft_Launcher
                     url = "109.231.31.129";
                     try
                     {
-                        if (await webClient.DownloadStringTaskAsync($"http://{url}/connect.txt") != "sex")
+                        if (await webClient.DownloadStringTaskAsync($"http://{url}/connect.txt") != "yup")
                         {
                             labelloading.Text = "Trying offline mode...";
                             await Task.Delay(100);
@@ -189,6 +192,14 @@ namespace Minecraft_Launcher
             if (!Directory.Exists(launcherdir + "\\profiles"))
             {
                 Directory.CreateDirectory(launcherdir + "\\profiles");
+            }
+            if (!Directory.Exists(launcherdir + "\\bedrock\\stockappx"))
+            {
+                Directory.CreateDirectory(launcherdir + "\\bedrock\\stockappx");
+            }
+            if (!Directory.Exists(launcherdir + "\\bedrock\\importedappx"))
+            {
+                Directory.CreateDirectory(launcherdir + "\\bedrock\\importedappx");
             }
             if (!File.Exists(configsdir + "\\settings.mks"))
             {
@@ -1312,5 +1323,7 @@ namespace Minecraft_Launcher
                 MessageBox.Show("Unknown error: " + ex.Message, "Delete profile error");
             }
         }
+
+       
     }
 }
